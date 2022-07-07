@@ -12,3 +12,14 @@ export const login = (data) => {
     data
   })
 }
+
+/**
+ * 获取用户权限
+ * @returns {AxiosPromise}
+ */
+export const permissionList = () => {
+  return request({
+    url: '/users/getPermissionList',
+    method: 'GET'
+  })
+}
