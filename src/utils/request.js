@@ -11,6 +11,10 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     store.commit('loading/openLoading')
+    const token = store.getters.token
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     // TODO 请求有处理
     return config
   },
