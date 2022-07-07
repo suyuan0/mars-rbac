@@ -31,7 +31,10 @@ import { UserOutlined, EyeInvisibleOutlined, EyeOutlined } from '@ant-design/ico
 import rules from './rules'
 import { reactive, ref } from 'vue'
 import { useStore } from 'vuex'
+import { message } from 'ant-design-vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const store = useStore()
 // 密码框切换
 const passwordText = ref('password')
@@ -46,6 +49,8 @@ const loginFormModel = reactive({
 // 登录
 const handleLogin = async (value) => {
   await store.dispatch('user/userLogin', value)
+  message.success('登录成功')
+  router.push({ name: 'layout' })
 }
 </script>
 

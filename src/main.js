@@ -5,6 +5,7 @@ import store from './store'
 import 'ant-design-vue/dist/antd.css'
 import Antd from 'ant-design-vue'
 import './styles/reset.css'
+import './permission'
 
 const app = createApp(App)
 app.use(Antd)

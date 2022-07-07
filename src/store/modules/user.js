@@ -9,13 +9,14 @@ export default {
   }),
   mutations: {
     setUserInfo(state, userInfo) {
-      state.token = userInfo
+      state.userInfo = userInfo
       setItem(USER_INFO, userInfo)
     }
   },
   actions: {
     async userLogin({ commit }, data) {
-      commit('setUserInfo', await login(data))
+      const res = await login(data)
+      commit('setUserInfo', res)
     }
   }
 }
