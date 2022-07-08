@@ -12,7 +12,9 @@
           </a>
         </a-menu-item>
         <a-menu-item>
-          <a href='javascript:;' @click='handleLogout'>退出</a>
+          <a-popconfirm title='确定要退出嘛' @cancel='cancel' @confirm='confirm'>
+            <a href='javascript:;' @click='handleLogout'>退出</a>
+          </a-popconfirm>
         </a-menu-item>
       </a-menu>
     </template>
@@ -21,10 +23,21 @@
 <script setup>
 import { DownOutlined } from '@ant-design/icons-vue'
 import { useStore } from 'vuex'
+import { message } from 'ant-design-vue'
 
 const store = useStore()
-const handleLogout = () => {
-  store.commit('user/tokeNoverdue')
+
+const confirm = () => {
+  return new Promise(resolve => {
+    message.error('呜呜呜，拜拜咯')
+    setTimeout(() =>
+      store.commit('user/tokeNoverdue'), 1.5 * 1000)
+  })
+}
+
+const cancel = e => {
+  console.log(e)
+  message.success('好叭，看来你舍不得离开我')
 }
 </script>
 

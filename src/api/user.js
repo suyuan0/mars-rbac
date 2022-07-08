@@ -23,3 +23,16 @@ export const permissionList = () => {
     method: 'GET'
   })
 }
+
+/**
+ * 获取用户列表
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export const userList = (data) => {
+  return request({
+    url: '/users/list',
+    method: 'GET',
+    data
+  })
+}

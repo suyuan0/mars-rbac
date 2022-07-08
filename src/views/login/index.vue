@@ -19,7 +19,7 @@
           </a-input>
         </a-form-item>
         <a-form-item>
-          <a-button block html-type='submit' type='primary'>登录</a-button>
+          <a-button :loading='loginLoading' block html-type='submit' type='primary'>登录</a-button>
         </a-form-item>
       </a-form>
     </div>
@@ -34,6 +34,7 @@ import { useStore } from 'vuex'
 import { message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 
+const loginLoading = ref(false)
 const router = useRouter()
 const store = useStore()
 // 密码框切换
@@ -48,9 +49,15 @@ const loginFormModel = reactive({
 })
 // 登录
 const handleLogin = async (value) => {
-  await store.dispatch('user/userLogin', value)
-  message.success('登录成功')
-  router.push({ name: 'layout' })
+  loginLoading.value = true
+  try {
+    await store.dispatch('user/userLogin', value)
+    message.success('登录成功')
+    router.push({ name: 'layout' })
+  } catch (e) {
+    console.log(e)
+  }
+  loginLoading.value = false
 }
 </script>
 

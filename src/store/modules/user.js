@@ -29,13 +29,21 @@ export default {
   actions: {
     // 用户信息
     async userLogin({ commit }, data) {
-      const res = await login(data)
-      commit('setUserInfo', res)
+      try {
+        const res = await login(data)
+        commit('setUserInfo', res)
+      } catch (e) {
+        console.log(e)
+      }
     },
     async userPermissionList({ commit }) {
-      const { actionList } = await permissionList()
-      commit('setActionList', actionList)
-      return actionList
+      try {
+        const { actionList } = await permissionList()
+        commit('setActionList', actionList)
+        return actionList
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }

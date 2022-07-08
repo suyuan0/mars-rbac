@@ -1,6 +1,8 @@
 import axios from 'axios'
 import store from '@/store'
 import { message } from 'ant-design-vue'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
 // 创建aixos实例
 const instance = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -10,6 +12,7 @@ const instance = axios.create({
 // 请求拦截器
 instance.interceptors.request.use(
   (config) => {
+    NProgress.start()
     store.commit('loading/openLoading')
     const token = store.getters.token
     if (token) {
@@ -19,6 +22,7 @@ instance.interceptors.request.use(
     return config
   },
   (error) => {
+    NProgress.done()
     store.commit('loading/endLoading')
     return Promise.reject(error)
   }
@@ -27,6 +31,7 @@ instance.interceptors.request.use(
 // 响应拦截器
 instance.interceptors.response.use(
   (response) => {
+    NProgress.done()
     store.commit('loading/endLoading')
     const { code, data, msg } = response.data
     if (code === 200) {
@@ -42,6 +47,7 @@ instance.interceptors.response.use(
     return Promise.reject(new Error(msg))
   },
   (error) => {
+    NProgress.done()
     store.commit('loading/endLoading')
     const { message } = error
     if (message.includes('Network Error')) {
