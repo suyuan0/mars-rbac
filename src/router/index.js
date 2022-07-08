@@ -1,7 +1,13 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import layout from '@/layout'
-
-const publicRoutes = [
+import user from './modules/user'
+import menu from './modules/menu'
+import role from './modules/role'
+import dept from './modules/dept'
+import leave from './modules/leave'
+import approve from './modules/approve'
+// 共有路由
+export const publicRoutes = [
   {
     path: '/login',
     name: 'login',
@@ -24,10 +30,11 @@ const publicRoutes = [
     ]
   }
 ]
-
+// 私有路由
+export const prviteRoutes = [user, menu, role, dept, leave, approve]
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: publicRoutes
+  routes: [...publicRoutes, ...prviteRoutes]
 })
 
 export default router
