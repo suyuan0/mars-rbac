@@ -26,6 +26,11 @@ export const publicRoutes = [
           title: '欢迎体验Vue3全栈课程'
         },
         component: () => import('@/views/other/welcome')
+      },
+      {
+        path: '/404',
+        name: '404',
+        component: () => import('@/views/other/404')
       }
     ]
   }

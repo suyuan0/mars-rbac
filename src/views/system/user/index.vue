@@ -21,10 +21,10 @@
     </a-card>
     <a-card>
       <div style='margin-bottom:15px '>
-        <a-button style='margin-right:10px ' type='primary'>新增</a-button>
+        <a-button style='margin-right:10px ' type='primary' @click='modelVisible=true'>新增</a-button>
         <a-button type='danger'>批量删除</a-button>
       </div>
-      <a-spin :spinning='$store.getters.loading'>
+      <a-spin :spinning='$store.getters.loading' tip='Loading...'>
         <a-table :columns='clos' :data-source='tableList'
                  :pagination='pagination'
                  :row-class-name="(_record, index) => (index % 2 === 1 ? 'table-striped' : null)"
@@ -51,12 +51,36 @@
       </a-spin>
     </a-card>
   </div>
+  <a-modal :visible='modelVisible' title='用户新增' width='700px' @cancel='modelVisible=false'>
+    <a-form :label-col='{span: 3, offset: 1}'>
+      <a-form-item label='用户名'>
+        <a-input />
+      </a-form-item>
+      <a-form-item label='邮箱'>
+        <a-input />
+      </a-form-item>
+      <a-form-item label='手机号'>
+        <a-input />
+      </a-form-item>
+      <a-form-item label='岗位'>
+        <a-input />
+      </a-form-item>
+      <a-form-item label='岗位'>
+        <a-select value='试用期'>
+          <a-select-option value='123'>试用期</a-select-option>
+        </a-select>
+      </a-form-item>
+    </a-form>
+  </a-modal>
+  <a-form></a-form>
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue'
 import { userList } from '@/api/user'
 import clos from './clos'
+
+const modelVisible = ref(false)
 // 获取用户列表
 const userListModel = reactive({
   pageNum: 1,
