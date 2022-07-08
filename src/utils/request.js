@@ -32,6 +32,11 @@ instance.interceptors.response.use(
     if (code === 200) {
       return data
     }
+    if (code === 500001) {
+      // TODO token过期
+      store.commit('user/tokeNoverdue')
+      return _showErrorMsg('请重新登录')
+    }
     _showErrorMsg(msg)
     // TODO 响应数据处理
     return Promise.reject(new Error(msg))

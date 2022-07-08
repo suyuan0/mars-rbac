@@ -4,6 +4,7 @@ import store from '@/store'
 const whiteList = ['/login']
 router.beforeEach(async (to, from, next) => {
   const token = store.getters.token
+  document.title = to.meta.title || '嘿嘿'
   if (token) {
     if (to.path === '/login') {
       next(from.path)

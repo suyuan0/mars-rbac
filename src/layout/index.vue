@@ -4,7 +4,9 @@
       <SideBar></SideBar>
     </a-layout-sider>
     <a-layout>
-      <a-layout-header>Header</a-layout-header>
+      <a-layout-header>
+        <AppHeader />
+      </a-layout-header>
       <a-layout-content>
         <AppMain></AppMain>
       </a-layout-content>
@@ -15,6 +17,7 @@
 <script setup>
 import AppMain from '@/layout/AppMain'
 import SideBar from './SideBar'
+import AppHeader from '@/layout/AppHeader'
 </script>
 
 <style lang='scss' scoped>
@@ -29,6 +32,8 @@ import SideBar from './SideBar'
     background: #ffffff;
     border-bottom: 1px solid #ddd;
     height: 50px;
+    line-height: normal;
+    padding: 0 20px;
   }
 
   .ant-layout-content {

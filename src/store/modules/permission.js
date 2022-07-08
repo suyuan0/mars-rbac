@@ -3,11 +3,13 @@ import { publicRoutes, prviteRoutes } from '@/router'
 export default {
   namespaced: true,
   state: () => ({
-    menus: publicRoutes
+    menus: publicRoutes,
+    menuList: []
   }),
   mutations: {
     setMenus(state, routes) {
       state.menus = [...routes, ...publicRoutes]
+      state.menuList = routes.map((v) => v.name)
     }
   },
   actions: {

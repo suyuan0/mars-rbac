@@ -1,6 +1,8 @@
-import { setItem, getItem } from '@/utils/storage'
+import { setItem, getItem, removeItem } from '@/utils/storage'
 import { USER_INFO } from '@/utils/const'
 import { login, permissionList } from '@/api/user'
+import router from '@/router'
+import { resetRouter } from '@/utils/removeRoutes'
 
 export default {
   namespaced: true,
@@ -16,6 +18,12 @@ export default {
     },
     setActionList(state, actionList) {
       state.actionList = actionList
+    },
+    tokeNoverdue(state) {
+      resetRouter()
+      state.userInfo = {}
+      removeItem(USER_INFO)
+      router.push('/login')
     }
   },
   actions: {
