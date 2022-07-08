@@ -24,8 +24,10 @@ export default {
       const res = await login(data)
       commit('setUserInfo', res)
     },
-    async userPermissionList({ commit }, data) {
-      await permissionList()
+    async userPermissionList({ commit }) {
+      const { actionList } = await permissionList()
+      commit('setActionList', actionList)
+      return actionList
     }
   }
 }
