@@ -34,7 +34,7 @@ export const publicRoutes = [
 export const prviteRoutes = [user, menu, role, dept, leave, approve]
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: [...publicRoutes, ...prviteRoutes]
+  routes: publicRoutes
 })
 
 export default router

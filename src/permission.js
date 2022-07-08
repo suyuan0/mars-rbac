@@ -9,10 +9,11 @@ router.beforeEach(async (to, from, next) => {
       next(from.path)
     } else {
       const actions = store.getters.actionList
-      if (actions) {
-        const actions = await store.dispatch('user/userPermissionList')
-        const routes = await store.dispatch('permission/filterMenus', actions)
+      if (JSON.stringify(actions) === '[]') {
+        const menus = await store.dispatch('user/userPermissionList')
+        const routes = await store.dispatch('permission/filterMenus', menus)
         routes.forEach((item) => router.addRoute(item))
+        return next(to.path)
       }
       next()
     }

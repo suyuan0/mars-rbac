@@ -3,6 +3,8 @@ module.exports = defineConfig({
   transpileDependencies: true,
   // 配置跨域
   devServer: {
+    port: '3000',
+    host: 'localhost',
     open: true,
     https: false,
     proxy: {

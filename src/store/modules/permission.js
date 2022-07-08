@@ -7,21 +7,20 @@ export default {
   }),
   mutations: {
     setMenus(state, routes) {
-      state.menus.push(...routes)
+      state.menus = [...routes, ...publicRoutes]
     }
   },
   actions: {
     filterMenus({ commit }, actionList) {
       const routes = []
       actionList.forEach((name) => {
-        const data = prviteRoutes.filter((item) => item.name === name)
-        routes.push(...data)
+        routes.push(...prviteRoutes.filter((item) => item.name === name))
       })
       routes.push({
         path: '/:catchAll(.*)',
         redirect: '/404'
       })
-      commit('setMenus', routes)
+      commit('setMenus', routes.reverse())
       return routes
     }
   }

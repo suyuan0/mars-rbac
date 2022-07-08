@@ -1,6 +1,8 @@
 <template>
   <a-layout>
-    <a-layout-sider>Sider</a-layout-sider>
+    <a-layout-sider>
+      <SideBar></SideBar>
+    </a-layout-sider>
     <a-layout>
       <a-layout-header>Header</a-layout-header>
       <a-layout-content>
@@ -12,6 +14,7 @@
 
 <script setup>
 import AppMain from '@/layout/AppMain'
+import SideBar from './SideBar'
 </script>
 
 <style lang='scss' scoped>
