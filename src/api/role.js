@@ -7,3 +7,13 @@ export const roleList = (data) => {
     data
   })
 }
+
+/**
+ * 获取所有权限
+ */
+export const roleAllList = () => {
+  return request({
+    url: '/roles/allList',
+    method: 'GET'
+  })
+}

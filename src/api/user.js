@@ -36,3 +36,15 @@ export const userList = (data) => {
     data
   })
 }
+/**
+ * 创建用户
+ * @param data
+ * @returns {AxiosPromise}
+ */
+export const operate = (data) => {
+  return request({
+    url: '/users/operate',
+    method: 'POST',
+    data
+  })
+}

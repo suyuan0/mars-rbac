@@ -15,5 +15,10 @@ dayjs.locale('zh-cn')
 <style lang='scss'>
 html, body, #app, .ant-spin-nested-loading, .ant-spin-container {
   height: 100%;
+
+  .ant-table-wrapper {
+    height: 1200px;
+    overflow: auto;
+  }
 }
 </style>

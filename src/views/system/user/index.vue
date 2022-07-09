@@ -19,7 +19,7 @@
         </a-form-item>
       </a-form>
     </a-card>
-    <a-card>
+    <a-card class='table-card'>
       <div style='margin-bottom:15px '>
         <a-button style='margin-right:10px ' type='primary' @click='modelVisible=true'>新增</a-button>
         <a-button type='danger'>批量删除</a-button>
@@ -51,36 +51,54 @@
       </a-spin>
     </a-card>
   </div>
-  <a-modal :visible='modelVisible' title='用户新增' width='700px' @cancel='modelVisible=false'>
-    <a-form :label-col='{span: 3, offset: 1}'>
-      <a-form-item label='用户名'>
-        <a-input />
+  <a-modal :visible='modelVisible' title='用户新增' width='700px' @cancel='modelVisible=false' @ok='handleAddUser'>
+    <a-form ref='formRef' :label-col='{span: 3, offset: 1}' :model='addUsersModel' :rules='rules'>
+      <a-form-item label='用户名' name='userName'>
+        <a-input v-model:value='addUsersModel.userName' placeholder='请输入用户名称' />
       </a-form-item>
-      <a-form-item label='邮箱'>
-        <a-input />
+      <a-form-item label='邮箱' name='userEmail'>
+        <a-input v-model:value='addUsersModel.userEmail' addon-after='@imocc.com' placeholder='请输入用户邮箱' />
       </a-form-item>
       <a-form-item label='手机号'>
-        <a-input />
+        <a-input v-model:value='addUsersModel.mobile' placeholder='请输入手机号' />
       </a-form-item>
       <a-form-item label='岗位'>
-        <a-input />
+        <a-input v-model:value='addUsersModel.job' placeholder='请输入岗位' />
       </a-form-item>
       <a-form-item label='岗位'>
-        <a-select value='试用期'>
-          <a-select-option value='123'>试用期</a-select-option>
+        <a-select v-model:value='addUsersModel.state'>
+          <a-select-option value='1'>在职</a-select-option>
+          <a-select-option value='2'>离职</a-select-option>
+          <a-select-option value='3'>试用期</a-select-option>
         </a-select>
+      </a-form-item>
+      <a-form-item label='系统角色'>
+        <a-cascader :field-names='systemFieldNames' :options='systemOptions' multiple placeholder='请选择用户系统角色'
+                    @change='changeSystem'></a-cascader>
+      </a-form-item>
+      <a-form-item label='部门' name='deptId'>
+        <a-cascader :field-names='deptFieldNames' :options='deptOptions' change-on-select
+                    placeholder='请选择所属部门' @change='changeDept'></a-cascader>
       </a-form-item>
     </a-form>
   </a-modal>
-  <a-form></a-form>
 </template>
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { userList } from '@/api/user'
+import { userList, operate } from '@/api/user'
+import { roleAllList } from '@/api/role'
+import { deptList } from '@/api/dept'
+import systemFieldNames from './systemFieldNames'
+import deptFieldNames from './deptFieldNames'
 import clos from './clos'
+import rules from './rules'
+import { message } from 'ant-design-vue'
 
+const formRef = ref(null)
 const modelVisible = ref(false)
+const systemOptions = ref([])
+const deptOptions = ref([])
 // 获取用户列表
 const userListModel = reactive({
   pageNum: 1,
@@ -88,7 +106,8 @@ const userListModel = reactive({
   state: '1',
   userName: '',
   userId: ''
-})// 分页
+})
+// 分页
 const pagination = ref({
   showSizeChanger: true,
   showQuickJumper: true,
@@ -97,15 +116,35 @@ const pagination = ref({
   pageSizeOptions: ['5', '10', '15', '20'],
   showTotal: total => `共${total}条记录 `
 })
+// 添加用户数据模型
+const addUsersModel = reactive({
+  action: 'add',
+  userName: '',
+  userEmail: '',
+  mobile: '',
+  job: '',
+  state: '3',
+  roleList: [],
+  deptId: []
+})
 const tableList = ref([])
 const getUserList = async () => {
   try {
+    if (!userListModel.userId) {
+      delete userListModel.userId
+    }
+    if (!userListModel.userName) {
+      delete userListModel.userName
+    }
     const {
       list,
       page
     } = await userList(userListModel)
     tableList.value = list
+    userListModel.total = page.total
     pagination.value.total = page.total
+    deptOptions.value = await deptList()
+    systemOptions.value = await roleAllList()
   } catch (e) {
     console.log(e)
   }
@@ -125,7 +164,6 @@ const handleChangePagintaion = async (pagination) => {
 const state = reactive({
   selectedRowKeys: []
 })
-
 const onSelectChange = selectedRowKeys => {
   state.selectedRowKeys = selectedRowKeys
 }
@@ -151,8 +189,31 @@ const reset = () => {
   userListModel.userId = ''
   userListModel.state = '1'
 }
-
+// 下拉框选择
+const changeSystem = value => {
+  const set = new Set()
+  value.forEach(item => set.add(...item))
+  addUsersModel.roleList = [...set]
+}
+const changeDept = value => {
+  addUsersModel.deptId = value
+}
+// 添加用户
+const handleAddUser = async () => {
+  try {
+    await formRef.value.validate()
+    const addModel = { ...addUsersModel }
+    addModel.userEmail = addModel.userEmail.concat('@imocc.com')
+    await operate(addModel)
+    message.success('创建成功')
+    modelVisible.value = false
+    getUserList()
+  } catch (e) {
+    console.log(e)
+  }
+}
 </script>
 
 <style lang='scss' scoped>
+
 </style>
