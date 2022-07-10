@@ -1,6 +1,7 @@
 <template>
   <a-dropdown>
     <a class='ant-dropdown-link' @click.prevent>
+      <heart-two-tone />
       {{ $store.getters.userInfo.userName }}
       <DownOutlined />
     </a>
@@ -21,7 +22,7 @@
   </a-dropdown>
 </template>
 <script setup>
-import { DownOutlined } from '@ant-design/icons-vue'
+import { DownOutlined, HeartTwoTone } from '@ant-design/icons-vue'
 import { useStore } from 'vuex'
 import { message } from 'ant-design-vue'
 
