@@ -48,3 +48,11 @@ export const operate = (data) => {
     data
   })
 }
+
+export const remove = (data) => {
+  return request({
+    url: '/users/delete',
+    method: 'POST',
+    data
+  })
+}

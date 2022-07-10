@@ -22,7 +22,7 @@
     <a-card class='table-card'>
       <div style='margin-bottom:15px '>
         <a-button style='margin-right:10px ' type='primary' @click='modelVisible=true'>新增</a-button>
-        <a-button type='danger'>批量删除</a-button>
+        <a-button type='danger' @click='BatchDelete'>批量删除</a-button>
       </div>
       <a-spin :spinning='$store.getters.loading' tip='Loading...'>
         <a-table :columns='clos' :data-source='tableList'
@@ -32,32 +32,37 @@
                  bordered
                  row-key='userId'
                  @change='handleChangePagintaion'>
-          <template #bodyCell='{column,record:{role,state}}'>
+          <template #bodyCell='{column,record}'>
             <template v-if='column.dataIndex==="role"'>
-              <a-tag v-if='role===0' color='pink'>管理员</a-tag>
-              <a-tag v-if='role===1' color='orange'>普通用户</a-tag>
+              <a-tag v-if='record.role===0' color='pink'>管理员</a-tag>
+              <a-tag v-if='record.role===1' color='orange'>普通用户</a-tag>
             </template>
             <template v-if='column.dataIndex==="state"'>
-              <a-tag v-if='state===1' color='success'>在职</a-tag>
-              <a-tag v-if='state===2' color='processing'>离职</a-tag>
-              <a-tag v-if='state===3' color='error'>试用期</a-tag>
+              <a-tag v-if='record.state===1' color='success'>在职</a-tag>
+              <a-tag v-if='record.state===2' color='processing'>离职</a-tag>
+              <a-tag v-if='record.state===3' color='error'>试用期</a-tag>
             </template>
             <template v-if='column.dataIndex==="action"'>
-              <a-button style='margin-right: 10px;'>编辑</a-button>
-              <a-button type='danger'>删除</a-button>
+              <a-button style='margin-right: 10px;' @click='()=>{addUsersModel={...record};handleEdit(record)}'>编辑
+              </a-button>
+              <a-popconfirm title='确定要删除嘛?' @confirm='handleDelete(record)'>
+                <a-button type='danger'>删除</a-button>
+              </a-popconfirm>
             </template>
           </template>
         </a-table>
       </a-spin>
     </a-card>
   </div>
-  <a-modal :visible='modelVisible' title='用户新增' width='700px' @cancel='modelVisible=false' @ok='handleAddUser'>
+  <a-modal :title='modelTitle' :visible='modelVisible' width='700px' @cancel='handleHideMadol' @ok='handleAddUser'>
     <a-form ref='formRef' :label-col='{span: 3, offset: 1}' :model='addUsersModel' :rules='rules'>
       <a-form-item label='用户名' name='userName'>
-        <a-input v-model:value='addUsersModel.userName' placeholder='请输入用户名称' />
+        <a-input v-model:value='addUsersModel.userName' :disabled='inputDisabled'
+                 placeholder='请输入用户名称' />
       </a-form-item>
       <a-form-item label='邮箱' name='userEmail'>
-        <a-input v-model:value='addUsersModel.userEmail' addon-after='@imocc.com' placeholder='请输入用户邮箱' />
+        <a-input v-model:value='addUsersModel.userEmail'
+                 :disabled='inputDisabled' addon-after='@imocc.com' placeholder='请输入用户邮箱' />
       </a-form-item>
       <a-form-item label='手机号'>
         <a-input v-model:value='addUsersModel.mobile' placeholder='请输入手机号' />
@@ -65,7 +70,7 @@
       <a-form-item label='岗位'>
         <a-input v-model:value='addUsersModel.job' placeholder='请输入岗位' />
       </a-form-item>
-      <a-form-item label='岗位'>
+      <a-form-item label='状态'>
         <a-select v-model:value='addUsersModel.state'>
           <a-select-option value='1'>在职</a-select-option>
           <a-select-option value='2'>离职</a-select-option>
@@ -73,11 +78,13 @@
         </a-select>
       </a-form-item>
       <a-form-item label='系统角色'>
-        <a-cascader :field-names='systemFieldNames' :options='systemOptions' multiple placeholder='请选择用户系统角色'
+        <a-cascader v-model:value='addUsersModel.roleList' :field-names='systemFieldNames' :options='systemOptions'
+                    multiple placeholder='请选择用户系统角色'
                     @change='changeSystem'></a-cascader>
       </a-form-item>
       <a-form-item label='部门' name='deptId'>
-        <a-cascader :field-names='deptFieldNames' :options='deptOptions' change-on-select
+        <a-cascader v-model:value='addUsersModel.deptId' :field-names='deptFieldNames' :options='deptOptions'
+                    change-on-select
                     placeholder='请选择所属部门' @change='changeDept'></a-cascader>
       </a-form-item>
     </a-form>
@@ -85,8 +92,8 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
-import { userList, operate } from '@/api/user'
+import { computed, reactive, ref } from 'vue'
+import { userList, operate, remove } from '@/api/user'
 import { roleAllList } from '@/api/role'
 import { deptList } from '@/api/dept'
 import systemFieldNames from './systemFieldNames'
@@ -202,6 +209,7 @@ const changeDept = value => {
 const handleAddUser = async () => {
   try {
     await formRef.value.validate()
+    addUsersModel.action = 'add'
     const addModel = { ...addUsersModel }
     addModel.userEmail = addModel.userEmail.concat('@imocc.com')
     await operate(addModel)
@@ -212,6 +220,54 @@ const handleAddUser = async () => {
     console.log(e)
   }
 }
+// 关闭模态框
+const handleHideMadol = async () => {
+  try {
+    await formRef.value.resetFields()
+    modelVisible.value = false
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 编辑
+const handleEdit = async (record) => {
+  try {
+    addUsersModel.action = 'edit'
+    modelVisible.value = true
+    console.log(addUsersModel)
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 删除
+const handleDelete = async (record) => {
+  try {
+    await remove({ userIds: [record.userId] })
+    message.success('删除成功')
+    getUserList()
+  } catch (e) {
+    console.log(e)
+  }
+}
+// 批量删除
+const BatchDelete = async () => {
+  try {
+    if (JSON.stringify(state.selectedRowKeys) === '[]') {
+      return message.warn('请选择要删除的用户')
+    }
+    await remove({ userIds: state.selectedRowKeys })
+    message.success('删除成功')
+    getUserList()
+  } catch (e) {
+    console.log(e)
+  }
+}
+const modelTitle = computed(() => {
+  return addUsersModel.action === 'edit' ? '编辑用户' : '新增用户'
+})
+const inputDisabled = computed(() => {
+  return addUsersModel.action === 'edit'
+})
 </script>
 
 <style lang='scss' scoped>
